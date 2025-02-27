@@ -50,15 +50,77 @@
             transition: width 0.5s ease-in-out;
         }
 
-        /* Контейнер для 3D-модели */
-        #model-container {
+        /* Экран разгрузки */
+        #unloading-screen {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            height: 200px;
-            position: relative;
-            margin-top: 20px;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Нижние кнопки */
+        /* Анимация разгрузки */
+        .truck-animation {
+            position: relative;
+            width: 100%;
+            height: 150px;
+        }
+        .truck {
+            width: 100px;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: move-truck 2s infinite;
+        }
+        .loader {
+            width: 50px;
+            position: absolute;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: unload 2s infinite;
+        }
+
+        @keyframes move-truck {
+            0% { transform: translateY(0) translateX(-50%); }
+            50% { transform: translateY(-10px) translateX(-50%); }
+            100% { transform: translateY(0) translateX(-50%); }
+        }
+        @keyframes unload {
+            0% { transform: rotate(0deg) translateX(-50%); }
+            50% { transform: rotate(30deg) translateX(-50%); }
+            100% { transform: rotate(0deg) translateX(-50%); }
+        }
+
+        /* Задания */
+        #tasks-screen {
+            display: none;
+            text-align: center;
+        }
+        .task {
+            margin: 10px 0;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #008CBA;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        .task:hover {
+            background-color: #005f73;
+        }
+
+        /* Нижняя панель */
         .bottom-buttons {
             position: fixed;
             bottom: 0;
@@ -66,9 +128,9 @@
             width: 100%;
             display: flex;
             justify-content: space-around;
-            background: #fff;
+            background: #4CAF50; /* Приятный зеленый цвет */
             padding: 10px 0;
-            border-top: 1px solid #ddd;
+            border-top: 1px solid #3E8E41;
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
         }
         .bottom-button {
@@ -77,13 +139,13 @@
             cursor: pointer;
             border: none;
             border-radius: 25px;
-            background-color: #007BFF;
-            color: white;
+            background-color: #ffffff;
+            color: #4CAF50;
             transition: background-color 0.3s, transform 0.2s;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         .bottom-button:hover {
-            background-color: #0056b3;
+            background-color: #e0f7ea;
             transform: scale(1.1);
         }
     </style>
@@ -100,30 +162,6 @@
                     <div id="progressBarFill" class="progress-bar-fill"></div>
                 </div>
                 <button onclick="renameCharacter()">Изменить имя</button>
-            </div>
-            <!-- Контейнер для 3D-модели -->
-            <div id="model-container">
-                <div class="sketchfab-embed-wrapper">
-                    <iframe 
-                        title="Loader" 
-                        frameborder="0" 
-                        allowfullscreen 
-                        mozallowfullscreen="true" 
-                        webkitallowfullscreen="true" 
-                        allow="autoplay; fullscreen; xr-spatial-tracking" 
-                        xr-spatial-tracking 
-                        execution-while-out-of-viewport 
-                        execution-while-not-rendered 
-                        web-share 
-                        src="https://sketchfab.com/models/e3c7c08d1aa044db87466affcee3a54b/embed" 
-                        style="width: 100%; height: 200px;"
-                    ></iframe>
-                    <p style="font-size: 13px; font-weight: normal; margin: 5px; color: #4A4A4A;">
-                        <a href="https://sketchfab.com/3d-models/loader-e3c7c08d1aa044db87466affcee3a54b?utm_medium=embed&utm_campaign=share-popup&utm_content=e3c7c08d1aa044db87466affcee3a54b" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;">Loader</a> 
-                        by <a href="https://sketchfab.com/rlggut?utm_medium=embed&utm_campaign=share-popup&utm_content=e3c7c08d1aa044db87466affcee3a54b" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;">rlggut</a> 
-                        on <a href="https://sketchfab.com?utm_medium=embed&utm_campaign=share-popup&utm_content=e3c7c08d1aa044db87466affcee3a54b" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;">Sketchfab</a>
-                    </p>
-                </div>
             </div>
         </div>
 
@@ -145,24 +183,22 @@
         <!-- Экран заданий -->
         <div id="tasks-screen" style="display: none;">
             <h2>Задания</h2>
-            <div class="tasks">
-                <button class="task-button" onclick="showReferralTask()">Пригласить друга</button>
-                <button class="task-button" onclick="showSubscribeTask()">Подписаться на канал</button>
-                <button class="task-button" onclick="showStatusTask()">Добавить в статус</button>
-            </div>
+            <button class="task" onclick="showReferralTask()">Пригласить друга</button>
+            <button class="task" onclick="showSubscribeTask()">Подписаться на канал</button>
+            <button class="task" onclick="showStatusTask()">Добавить в статус</button>
         </div>
     </div>
 
     <!-- Нижние кнопки -->
     <div class="bottom-buttons">
         <button class="bottom-button" onclick="showUnloadingScreen()">
-            <img src="unload-icon.png" alt="Разгрузка" width="24" height="24"> Разгрузка машины
+            Разгрузка машины
         </button>
         <button class="bottom-button" onclick="showProfileScreen()">
-            <img src="profile-icon.png" alt="Профиль" width="24" height="24"> Профиль
+            Профиль
         </button>
         <button class="bottom-button" onclick="showTasksScreen()">
-            <img src="tasks-icon.png" alt="Задания" width="24" height="24"> Задания
+            Задания
         </button>
     </div>
 
