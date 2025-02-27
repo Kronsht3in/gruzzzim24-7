@@ -12,7 +12,7 @@
             width: 100%;
             height: 100%;
             font-family: Arial, sans-serif;
-            background: url('background-truck.jpg') no-repeat center center fixed;
+            background: url('background-truck.jpg') no-repeat center center fixed; /* Фон для всех вкладок */
             background-size: cover;
             display: flex;
             flex-direction: column;
@@ -50,6 +50,20 @@
             transition: width 0.5s ease-in-out;
         }
 
+        /* Моделька игрока на главном экране */
+        #main-screen img.player-model {
+            width: 100px;
+            height: auto;
+            margin: 20px auto;
+            display: block;
+            animation: player-spin 5s infinite;
+        }
+
+        @keyframes player-spin {
+            from { transform: rotateY(0deg); }
+            to { transform: rotateY(360deg); }
+        }
+
         /* Экран разгрузки машины */
         #unloading-screen {
             display: none;
@@ -58,8 +72,6 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('unloading-background.jpg') no-repeat center center fixed; /* Фон для разгрузки */
-            background-size: cover;
             color: white;
             display: flex;
             flex-direction: column;
@@ -79,7 +91,7 @@
 
         .truck {
             width: 100px;
-            transform: rotateY(180deg); /* Разворачиваем грузовик на 180 градусов */
+            transform: rotateY(180deg); /* Разворачиваем грузовик */
             animation: move-truck 2s infinite;
         }
 
@@ -103,19 +115,41 @@
 
         /* Кнопка "Разгрузить машину" */
         #unload-start-button {
-            padding: 15px 30px;
-            font-size: 18px;
+            padding: 20px 40px;
+            font-size: 20px;
             cursor: pointer;
             border: none;
-            border-radius: 10px;
+            border-radius: 15px;
             background-color: #007BFF;
             color: white;
             transition: background-color 0.3s, transform 0.2s;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
         }
         #unload-start-button:hover {
             background-color: #0056b3;
             transform: scale(1.1);
+        }
+
+        /* Задания */
+        #tasks-screen {
+            display: none;
+            text-align: center;
+        }
+        .task {
+            margin: 10px 0;
+            padding: 15px 25px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+            background-color: #008CBA;
+            color: white;
+            transition: background-color 0.3s;
+            width: 80%;
+            max-width: 300px;
+        }
+        .task:hover {
+            background-color: #005f73;
         }
 
         /* Нижние кнопки */
@@ -125,9 +159,9 @@
             left: 0;
             width: 100%;
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between; /* Равномерное распределение кнопок */
             background: #4CAF50;
-            padding: 10px 0;
+            padding: 10px 20px;
             border-top: 1px solid #3E8E41;
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
         }
@@ -141,6 +175,8 @@
             color: #4CAF50;
             transition: background-color 0.3s, transform 0.2s;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            flex: 1; /* Равномерное распределение по ширине */
+            margin: 0 5px;
         }
         .bottom-button:hover {
             background-color: #e0f7ea;
@@ -161,6 +197,7 @@
                 </div>
                 <button onclick="renameCharacter()">Изменить имя</button>
             </div>
+            <img src="/loaders.png" alt="Моделька игрока" class="player-model">
         </div>
 
         <!-- Экран разгрузки машины -->
@@ -170,8 +207,8 @@
             
             <!-- Анимация разгрузки -->
             <div class="truck-animation">
-                <img src="truck.png" alt="Грузовик" class="truck">
-                <img src="loader.png" alt="Грузчик" class="loader">
+                <img src="/truck.png" alt="Грузовик" class="truck">
+                <img src="/loader.png" alt="Грузчик" class="loader">
             </div>
             
             <div class="progress-bar">
@@ -192,15 +229,9 @@
 
     <!-- Нижние кнопки -->
     <div class="bottom-buttons">
-        <button class="bottom-button" onclick="showUnloadingScreen()">
-            Разгрузка машины
-        </button>
-        <button class="bottom-button" onclick="showProfileScreen()">
-            Профиль
-        </button>
-        <button class="bottom-button" onclick="showTasksScreen()">
-            Задания
-        </button>
+        <button class="bottom-button" onclick="showUnloadingScreen()">Разгрузка машины</button>
+        <button class="bottom-button" onclick="showProfileScreen()">Профиль</button>
+        <button class="bottom-button" onclick="showTasksScreen()">Задания</button>
     </div>
 
     <script>
@@ -258,7 +289,7 @@
             const xpGained = Math.floor(Math.random() * 10) + 5;
             gainXp(xpGained);
             alert(`Вы разгрузили машину и получили ${xpGained} XP!`);
-            backToMain('unloading');
+            document.getElementById('unload-button').style.display = 'block'; // Показываем кнопку "Завершить"
         }
 
         // Показать профиль
@@ -273,9 +304,10 @@
             document.getElementById('main-screen').style.display = 'none';
             document.getElementById('unloading-screen').style.display = 'flex';
             document.getElementById('tasks-screen').style.display = 'none';
-            document.getElementById('unload-start-button').style.display = 'block';
+            document.getElementById('unload-start-button').style.display = 'block'; // Показываем кнопку "Разгрузить машину"
             document.getElementById('unloadProgressBarFill').style.width = '0%';
             document.getElementById('unload-timer').textContent = 'Осталось: 10 секунд';
+            document.getElementById('unload-button').style.display = 'none'; // Скрываем кнопку "Завершить"
         }
 
         // Показать задания
