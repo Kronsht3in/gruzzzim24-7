@@ -12,27 +12,25 @@
             width: 100%;
             height: 100%;
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background: url('background-truck.jpg') no-repeat center center fixed;
+            background-size: cover;
             display: flex;
             flex-direction: column;
         }
 
         /* Главный контейнер */
         .container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         /* Информация о игроке */
         .player-info {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
             margin-bottom: 20px;
         }
 
@@ -49,14 +47,15 @@
             height: 100%;
             background-color: #4caf50;
             width: 0%;
-            transition: width 0.5s ease-in-out; /* Плавная анимация */
+            transition: width 0.5s ease-in-out;
         }
 
         /* Контейнер для 3D-модели */
         #model-container {
             width: 100%;
-            height: 50vh;
+            height: 200px;
             position: relative;
+            margin-top: 20px;
         }
 
         /* Экран разгрузки */
@@ -74,8 +73,39 @@
             align-items: center;
             justify-content: center;
         }
-        #unloadProgressBarFill {
-            transition: width 1s linear; /* Анимация прогресса */
+
+        /* Анимация разгрузки */
+        .truck-animation {
+            position: relative;
+            width: 100%;
+            height: 150px;
+        }
+        .truck {
+            width: 100px;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: move-truck 2s infinite;
+        }
+        .loader {
+            width: 50px;
+            position: absolute;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: unload 2s infinite;
+        }
+
+        @keyframes move-truck {
+            0% { transform: translateY(0) translateX(-50%); }
+            50% { transform: translateY(-10px) translateX(-50%); }
+            100% { transform: translateY(0) translateX(-50%); }
+        }
+        @keyframes unload {
+            0% { transform: rotate(0deg) translateX(-50%); }
+            50% { transform: rotate(30deg) translateX(-50%); }
+            100% { transform: rotate(0deg) translateX(-50%); }
         }
 
         /* Нижние кнопки */
@@ -92,17 +122,19 @@
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
         }
         .bottom-button {
-            padding: 15px 20px;
+            padding: 12px 20px;
             font-size: 16px;
             cursor: pointer;
             border: none;
-            border-radius: 5px;
-            background-color: #008CBA;
+            border-radius: 25px;
+            background-color: #007BFF;
             color: white;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         .bottom-button:hover {
-            background-color: #005f73;
+            background-color: #0056b3;
+            transform: scale(1.1);
         }
     </style>
 </head>
@@ -117,6 +149,7 @@
                 <div class="progress-bar">
                     <div id="progressBarFill" class="progress-bar-fill"></div>
                 </div>
+                <button onclick="renameCharacter()">Изменить имя</button>
             </div>
         </div>
 
@@ -136,6 +169,10 @@
         <!-- Экран разгрузки машины -->
         <div id="unloading-screen">
             <h2>Разгрузка машины...</h2>
+            <div class="truck-animation">
+                <img src="truck.png" alt="Грузовик" class="truck">
+                <img src="loader.png" alt="Грузчик" class="loader">
+            </div>
             <div class="progress-bar">
                 <div id="unloadProgressBarFill" class="progress-bar-fill"></div>
             </div>
@@ -185,7 +222,7 @@
             if (player.xp >= player.nextLevelXp) {
                 player.level++;
                 player.xp -= player.nextLevelXp;
-                player.nextLevelXp = Math.ceil(player.nextLevelXp * 1.5); // Увеличение XP для следующего уровня
+                player.nextLevelXp = Math.ceil(player.nextLevelXp * 1.5);
             }
             updateUI();
         }
@@ -203,7 +240,7 @@
             unloadTimer = setInterval(() => {
                 timeLeft--;
                 timerElement.textContent = `Осталось: ${timeLeft} секунд`;
-                progressBar.style.width = `${(10 - timeLeft) * 10}%`; // Обновление прогресса
+                progressBar.style.width = `${(10 - timeLeft) * 10}%`;
 
                 if (timeLeft <= 0) {
                     clearInterval(unloadTimer);
@@ -214,7 +251,7 @@
 
         function completeUnloading() {
             clearInterval(unloadTimer);
-            const xpGained = Math.floor(Math.random() * 10) + 5; // Случайное количество XP (от 5 до 15)
+            const xpGained = Math.floor(Math.random() * 10) + 5;
             gainXp(xpGained);
             alert(`Вы разгрузили машину и получили ${xpGained} XP!`);
             backToMain('unloading');
@@ -224,12 +261,12 @@
         function showProfileScreen() {
             document.getElementById('main-screen').style.display = 'none';
             document.getElementById('profile-screen').style.display = 'block';
-            init3DModel(); // Инициализация 3D-модели
+            init3DModel();
         }
 
         // Задания
         function showTasksScreen() {
-            alert("Здесь будут отображаться ваши задания!");
+            alert("Задания:\n1. Пригласите друга (+20 XP)\n2. Подпишитесь на канал (+15 XP)\n3. Добавьте игру в статус (+10 XP)");
         }
 
         // Возврат к главному экрану
@@ -244,39 +281,40 @@
 
         // 3D-модель грузчика
         function init3DModel() {
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, 300); // Размер модели
-    document.getElementById('model-container').appendChild(renderer.domElement);
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth * 0.8, 200);
+            document.getElementById('model-container').appendChild(renderer.domElement);
 
-    // Добавляем свет
-    const light = new THREE.DirectionalLight(0xffffff, 1);
-    light.position.set(10, 10, 10).normalize();
-    scene.add(light);
+            const light = new THREE.DirectionalLight(0xffffff, 1);
+            light.position.set(10, 10, 10).normalize();
+            scene.add(light);
 
-    // Загружаем 3D-модель
-    const loader = new THREE.GLTFLoader();
-    loader.load('loader.glb', function(gltf) { // Укажите правильный путь к файлу модели
-        const model = gltf.scene;
-        scene.add(model);
+            const loader = new THREE.GLTFLoader();
+            loader.load('loader.glb', function(gltf) {
+                const model = gltf.scene;
+                model.scale.set(0.5, 0.5, 0.5);
+                model.position.y = -1;
+                scene.add(model);
 
-        // Масштабирование модели (если нужно)
-        model.scale.set(0.5, 0.5, 0.5);
+                function animate() {
+                    requestAnimationFrame(animate);
+                    model.rotation.y += 0.01;
+                    renderer.render(scene, camera);
+                }
+                animate();
+            });
+        }
 
-        // Центрирование модели
-        model.position.y = -1; // Корректировка положения по Y
-    });
-
-    camera.position.z = 5;
-
-    function animate() {
-        requestAnimationFrame(animate);
-        renderer.render(scene, camera);
-    }
-
-    animate();
-}
+        // Изменение имени персонажа
+        function renameCharacter() {
+            const newName = prompt("Введите новое имя для вашего персонажа:");
+            if (newName && newName.trim() !== "") {
+                player.name = newName.trim();
+                updateUI();
+            }
+        }
     </script>
 </body>
 </html>
