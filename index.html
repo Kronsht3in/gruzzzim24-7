@@ -48,6 +48,7 @@
             height: 100%;
             background-color: #4caf50;
             width: 0%;
+            transition: width 0.5s ease-in-out; /* Плавная анимация */
         }
         img {
             max-width: 100%;
@@ -73,22 +74,23 @@
             <div class="progress-bar">
                 <div id="progressBarFill" class="progress-bar-fill"></div>
             </div>
-            <img src="https://i.imgur.com/your-loader-imahttps://avatars.mds.yandex.net/i?id=867b6b41773201737f49cece1d657216_l-4011168-images-thumbs&n=13ge.png" alt="Грузчик" id="loader-image">
+            <img src="https://i.imgur.com/your-loader-image.png" alt="Грузчик" id="loader-image">
             <button onclick="renameCharacter()">Изменить имя</button>
             <div style="margin-top: 20px;">
                 <button onclick="showUnloadingScreen()">Разгрузка машины</button>
                 <button onclick="showTasksScreen()">Задания</button>
             </div>
         </div>
-
         <!-- Экран разгрузки машины -->
         <div id="unloading-screen" style="display: none;">
             <h2>Разгрузка машины...</h2>
+            <div class="progress-bar">
+                <div id="unloadProgressBarFill" class="progress-bar-fill"></div>
+            </div>
             <p id="unload-timer">Осталось: 10 секунд</p>
             <button onclick="completeUnloading()" id="unload-button" disabled>Завершить</button>
             <button onclick="backToMain('unloading')">Назад</button>
         </div>
-
         <!-- Экран заданий -->
         <div id="tasks-screen" style="display: none;">
             <h2>Задания</h2>
@@ -100,7 +102,6 @@
             <button onclick="backToMain('tasks')">Назад</button>
         </div>
     </div>
-
     <script>
         // Состояние игрока
         let player = {
@@ -116,7 +117,6 @@
             document.getElementById('level').textContent = player.level;
             document.getElementById('currentXp').textContent = player.xp;
             document.getElementById('nextLevelXp').textContent = player.nextLevelXp;
-
             const progress = (player.xp / player.nextLevelXp) * 100;
             document.getElementById('progressBarFill').style.width = `${progress}%`;
         }
@@ -148,12 +148,14 @@
             document.getElementById('unloading-screen').style.display = 'block';
 
             let timeLeft = 10;
-            document.getElementById('unload-timer').textContent = `Осталось: ${timeLeft} секунд`;
-            document.getElementById('unload-button').disabled = true;
+            const progressBar = document.getElementById('unloadProgressBarFill');
+            const timerElement = document.getElementById('unload-timer');
 
             unloadTimer = setInterval(() => {
                 timeLeft--;
-                document.getElementById('unload-timer').textContent = `Осталось: ${timeLeft} секунд`;
+                timerElement.textContent = `Осталось: ${timeLeft} секунд`;
+                progressBar.style.width = `${(10 - timeLeft) * 10}%`; // Обновление прогресса
+
                 if (timeLeft <= 0) {
                     clearInterval(unloadTimer);
                     document.getElementById('unload-button').disabled = false;
@@ -177,7 +179,6 @@
 
         function checkSubscription() {
             alert("Функция проверки подписки не реализована в этом примере.");
-            // Здесь можно добавить логику проверки подписки через API Telegram
         }
 
         function shareInStatus() {
@@ -185,7 +186,7 @@
                 navigator.share({
                     title: "Грузчик Игра",
                     text: "Присоединяйтесь ко мне в игре Грузчик!",
-                    url: "https://kronsht3in.github.io/gruzim-24-7/"
+                    url: "https://kronsht3in.github.io/gruzzzim24-7/"
                 }).then(() => {
                     gainXp(10);
                     alert("Вы добавили игру в статус и получили 10 XP!");
