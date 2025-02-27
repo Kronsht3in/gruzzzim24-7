@@ -136,11 +136,32 @@
             background-color: #0056b3;
             transform: scale(1.1);
         }
+
+        /* Задания */
+        .tasks {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .task-button {
+            margin: 10px 0;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #008CBA;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        .task-button:hover {
+            background-color: #005f73;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Главный экран -->
+        <!-- Главный экран (Профиль) -->
         <div id="main-screen" style="display: block;">
             <div class="player-info">
                 <h1 id="player-name">Грузчик</h1>
@@ -151,24 +172,13 @@
                 </div>
                 <button onclick="renameCharacter()">Изменить имя</button>
             </div>
-        </div>
-
-        <!-- Экран профиля -->
-        <div id="profile-screen" style="display: none;">
-            <div class="player-info">
-                <h1 id="profile-player-name">Профиль: Грузчик</h1>
-                <p>Уровень: <span id="profile-level">1</span></p>
-                <p>XP: <span id="profile-currentXp">0</span> / <span id="profile-nextLevelXp">10</span></p>
-                <div class="progress-bar">
-                    <div id="profile-progressBarFill" class="progress-bar-fill"></div>
-                </div>
-            </div>
             <div id="model-container"></div>
         </div>
 
         <!-- Экран разгрузки машины -->
-        <div id="unloading-screen">
-            <h2>Разгрузка машины...</h2>
+        <div id="unloading-screen" style="display: none;">
+            <h2>Разгрузка машины</h2>
+            <button onclick="startUnloading()" id="unload-start-button">Разгрузить машину</button>
             <div class="truck-animation">
                 <img src="truck.png" alt="Грузовик" class="truck">
                 <img src="loader.png" alt="Грузчик" class="loader">
@@ -179,13 +189,29 @@
             <p id="unload-timer">Осталось: 10 секунд</p>
             <button onclick="completeUnloading()" id="unload-button" disabled>Завершить</button>
         </div>
+
+        <!-- Экран заданий -->
+        <div id="tasks-screen" style="display: none;">
+            <h2>Задания</h2>
+            <div class="tasks">
+                <button class="task-button" onclick="showReferralTask()">Пригласить друга</button>
+                <button class="task-button" onclick="showSubscribeTask()">Подписаться на канал</button>
+                <button class="task-button" onclick="showStatusTask()">Добавить в статус</button>
+            </div>
+        </div>
     </div>
 
     <!-- Нижние кнопки -->
     <div class="bottom-buttons">
-        <button class="bottom-button" onclick="showUnloadingScreen()">Разгрузка машины</button>
-        <button class="bottom-button" onclick="showProfileScreen()">Профиль</button>
-        <button class="bottom-button" onclick="showTasksScreen()">Задания</button>
+        <button class="bottom-button" onclick="showUnloadingScreen()">
+            <img src="unload-icon.png" alt="Разгрузка" width="24" height="24"> Разгрузка машины
+        </button>
+        <button class="bottom-button" onclick="showProfileScreen()">
+            <img src="profile-icon.png" alt="Профиль" width="24" height="24"> Профиль
+        </button>
+        <button class="bottom-button" onclick="showTasksScreen()">
+            <img src="tasks-icon.png" alt="Задания" width="24" height="24"> Задания
+        </button>
     </div>
 
     <!-- Подключение Three.js -->
@@ -207,13 +233,6 @@
             document.getElementById('nextLevelXp').textContent = player.nextLevelXp;
             const progress = (player.xp / player.nextLevelXp) * 100;
             document.getElementById('progressBarFill').style.width = `${progress}%`;
-
-            // Обновление профиля
-            document.getElementById('profile-player-name').textContent = `Профиль: ${player.name}`;
-            document.getElementById('profile-level').textContent = player.level;
-            document.getElementById('profile-currentXp').textContent = player.xp;
-            document.getElementById('profile-nextLevelXp').textContent = player.nextLevelXp;
-            document.getElementById('profile-progressBarFill').style.width = `${progress}%`;
         }
 
         // Получение опыта
@@ -229,10 +248,8 @@
 
         // Разгрузка машины
         let unloadTimer;
-        function showUnloadingScreen() {
-            document.getElementById('main-screen').style.display = 'none';
-            document.getElementById('unloading-screen').style.display = 'flex';
-
+        function startUnloading() {
+            document.getElementById('unload-start-button').style.display = 'none';
             let timeLeft = 10;
             const progressBar = document.getElementById('unloadProgressBarFill');
             const timerElement = document.getElementById('unload-timer');
@@ -257,27 +274,37 @@
             backToMain('unloading');
         }
 
-        // Профиль
+        // Показать профиль
         function showProfileScreen() {
-            document.getElementById('main-screen').style.display = 'none';
-            document.getElementById('profile-screen').style.display = 'block';
+            document.getElementById('main-screen').style.display = 'block';
+            document.getElementById('unloading-screen').style.display = 'none';
+            document.getElementById('tasks-screen').style.display = 'none';
             init3DModel();
         }
 
-        // Задания
+        // Показать разгрузку машины
+        function showUnloadingScreen() {
+            document.getElementById('main-screen').style.display = 'none';
+            document.getElementById('unloading-screen').style.display = 'flex';
+            document.getElementById('tasks-screen').style.display = 'none';
+            document.getElementById('unload-start-button').style.display = 'block';
+            document.getElementById('unloadProgressBarFill').style.width = '0%';
+            document.getElementById('unload-timer').textContent = 'Осталось: 10 секунд';
+        }
+
+        // Показать задания
         function showTasksScreen() {
-            alert("Задания:\n1. Пригласите друга (+20 XP)\n2. Подпишитесь на канал (+15 XP)\n3. Добавьте игру в статус (+10 XP)");
+            document.getElementById('main-screen').style.display = 'none';
+            document.getElementById('unloading-screen').style.display = 'none';
+            document.getElementById('tasks-screen').style.display = 'block';
         }
 
         // Возврат к главному экрану
         function backToMain(from) {
             document.getElementById('main-screen').style.display = 'block';
             document.getElementById('unloading-screen').style.display = 'none';
-            document.getElementById('profile-screen').style.display = 'none';
+            document.getElementById('tasks-screen').style.display = 'none';
         }
-
-        // Инициализация игры
-        updateUI();
 
         // 3D-модель грузчика
         function init3DModel() {
@@ -315,6 +342,25 @@
                 updateUI();
             }
         }
+
+        // Реферальная система
+        function showReferralTask() {
+            alert(`Ваша реферальная ссылка:\nhttps://t.me/your_bot?start=ref_${player.chat_id}\nКаждый приглашенный друг дает +20 XP.`);
+        }
+
+        // Подписка на канал
+        function showSubscribeTask() {
+            alert("Подпишитесь на канал, чтобы получить +15 XP.");
+        }
+
+        // Добавление в статус
+        function showStatusTask() {
+            alert("Добавьте игру в свой статус Telegram, чтобы получить +10 XP.");
+        }
+
+        // Инициализация игры
+        updateUI();
+        showProfileScreen(); // По умолчанию показываем профиль
     </script>
 </body>
 </html>
