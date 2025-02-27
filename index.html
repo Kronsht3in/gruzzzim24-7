@@ -5,37 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Грузчик Игра</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
+        /* Общие стили */
+        body, html {
             margin: 0;
             padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: Arial, sans-serif;
             background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
         }
+
+        /* Главный контейнер */
         .container {
-            max-width: 400px;
-            margin: 0 auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        /* Информация о игроке */
+        .player-info {
+            background: rgba(255, 255, 255, 0.9);
             padding: 20px;
-            background: #fff;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
         }
-        h1 {
-            color: #333;
-        }
-        button {
-            padding: 10px 20px;
-            margin: 10px;
-            font-size: 16px;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-            background-color: #008CBA;
-            color: white;
-        }
-        button:hover {
-            background-color: #005f73;
-        }
+
+        /* Прогресс-бар */
         .progress-bar {
             width: 100%;
             height: 20px;
@@ -50,17 +51,58 @@
             width: 0%;
             transition: width 0.5s ease-in-out; /* Плавная анимация */
         }
-        img {
-            max-width: 100%;
-            height: auto;
+
+        /* Контейнер для 3D-модели */
+        #model-container {
+            width: 100%;
+            height: 50vh;
+            position: relative;
         }
-        .tasks {
+
+        /* Экран разгрузки */
+        #unloading-screen {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
         }
-        .task-button {
-            margin: 5px 0;
+        #unloadProgressBarFill {
+            transition: width 1s linear; /* Анимация прогресса */
+        }
+
+        /* Нижние кнопки */
+        .bottom-buttons {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            background: #fff;
+            padding: 10px 0;
+            border-top: 1px solid #ddd;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .bottom-button {
+            padding: 15px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #008CBA;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        .bottom-button:hover {
+            background-color: #005f73;
         }
     </style>
 </head>
@@ -68,40 +110,49 @@
     <div class="container">
         <!-- Главный экран -->
         <div id="main-screen" style="display: block;">
-            <h1 id="player-name">Грузчик</h1>
-            <p>Уровень: <span id="level">1</span></p>
-            <p>XP: <span id="currentXp">0</span> / <span id="nextLevelXp">10</span></p>
-            <div class="progress-bar">
-                <div id="progressBarFill" class="progress-bar-fill"></div>
-            </div>
-            <img src="https://i.imgur.com/your-loader-image.png" alt="Грузчик" id="loader-image">
-            <button onclick="renameCharacter()">Изменить имя</button>
-            <div style="margin-top: 20px;">
-                <button onclick="showUnloadingScreen()">Разгрузка машины</button>
-                <button onclick="showTasksScreen()">Задания</button>
+            <div class="player-info">
+                <h1 id="player-name">Грузчик</h1>
+                <p>Уровень: <span id="level">1</span></p>
+                <p>XP: <span id="currentXp">0</span> / <span id="nextLevelXp">10</span></p>
+                <div class="progress-bar">
+                    <div id="progressBarFill" class="progress-bar-fill"></div>
+                </div>
             </div>
         </div>
+
+        <!-- Экран профиля -->
+        <div id="profile-screen" style="display: none;">
+            <div class="player-info">
+                <h1 id="profile-player-name">Профиль: Грузчик</h1>
+                <p>Уровень: <span id="profile-level">1</span></p>
+                <p>XP: <span id="profile-currentXp">0</span> / <span id="profile-nextLevelXp">10</span></p>
+                <div class="progress-bar">
+                    <div id="profile-progressBarFill" class="progress-bar-fill"></div>
+                </div>
+            </div>
+            <div id="model-container"></div>
+        </div>
+
         <!-- Экран разгрузки машины -->
-        <div id="unloading-screen" style="display: none;">
+        <div id="unloading-screen">
             <h2>Разгрузка машины...</h2>
             <div class="progress-bar">
                 <div id="unloadProgressBarFill" class="progress-bar-fill"></div>
             </div>
             <p id="unload-timer">Осталось: 10 секунд</p>
             <button onclick="completeUnloading()" id="unload-button" disabled>Завершить</button>
-            <button onclick="backToMain('unloading')">Назад</button>
-        </div>
-        <!-- Экран заданий -->
-        <div id="tasks-screen" style="display: none;">
-            <h2>Задания</h2>
-            <div class="tasks">
-                <button class="task-button" onclick="openReferralLink()">Пригласить друга</button>
-                <button class="task-button" onclick="checkSubscription()">Подписаться на канал</button>
-                <button class="task-button" onclick="shareInStatus()">Добавить в статус</button>
-            </div>
-            <button onclick="backToMain('tasks')">Назад</button>
         </div>
     </div>
+
+    <!-- Нижние кнопки -->
+    <div class="bottom-buttons">
+        <button class="bottom-button" onclick="showUnloadingScreen()">Разгрузка машины</button>
+        <button class="bottom-button" onclick="showProfileScreen()">Профиль</button>
+        <button class="bottom-button" onclick="showTasksScreen()">Задания</button>
+    </div>
+
+    <!-- Подключение Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
         // Состояние игрока
         let player = {
@@ -119,6 +170,13 @@
             document.getElementById('nextLevelXp').textContent = player.nextLevelXp;
             const progress = (player.xp / player.nextLevelXp) * 100;
             document.getElementById('progressBarFill').style.width = `${progress}%`;
+
+            // Обновление профиля
+            document.getElementById('profile-player-name').textContent = `Профиль: ${player.name}`;
+            document.getElementById('profile-level').textContent = player.level;
+            document.getElementById('profile-currentXp').textContent = player.xp;
+            document.getElementById('profile-nextLevelXp').textContent = player.nextLevelXp;
+            document.getElementById('profile-progressBarFill').style.width = `${progress}%`;
         }
 
         // Получение опыта
@@ -132,20 +190,11 @@
             updateUI();
         }
 
-        // Переименование персонажа
-        function renameCharacter() {
-            const newName = prompt("Введите новое имя для вашего персонажа:");
-            if (newName && newName.trim() !== "") {
-                player.name = newName.trim();
-                updateUI();
-            }
-        }
-
         // Разгрузка машины
         let unloadTimer;
         function showUnloadingScreen() {
             document.getElementById('main-screen').style.display = 'none';
-            document.getElementById('unloading-screen').style.display = 'block';
+            document.getElementById('unloading-screen').style.display = 'flex';
 
             let timeLeft = 10;
             const progressBar = document.getElementById('unloadProgressBarFill');
@@ -171,48 +220,63 @@
             backToMain('unloading');
         }
 
+        // Профиль
+        function showProfileScreen() {
+            document.getElementById('main-screen').style.display = 'none';
+            document.getElementById('profile-screen').style.display = 'block';
+            init3DModel(); // Инициализация 3D-модели
+        }
+
         // Задания
-        function openReferralLink() {
-            const referralLink = "https://t.me/your_bot?start=ref_12345"; // Замените на реальную ссылку
-            window.open(referralLink, "_blank");
-        }
-
-        function checkSubscription() {
-            alert("Функция проверки подписки не реализована в этом примере.");
-        }
-
-        function shareInStatus() {
-            if (navigator.share) {
-                navigator.share({
-                    title: "Грузчик Игра",
-                    text: "Присоединяйтесь ко мне в игре Грузчик!",
-                    url: "https://kronsht3in.github.io/gruzzzim24-7/"
-                }).then(() => {
-                    gainXp(10);
-                    alert("Вы добавили игру в статус и получили 10 XP!");
-                }).catch((error) => {
-                    console.error("Ошибка при делении:", error);
-                });
-            } else {
-                alert("Ваш браузер не поддерживает функцию деления.");
-            }
+        function showTasksScreen() {
+            alert("Здесь будут отображаться ваши задания!");
         }
 
         // Возврат к главному экрану
         function backToMain(from) {
             document.getElementById('main-screen').style.display = 'block';
             document.getElementById('unloading-screen').style.display = 'none';
-            document.getElementById('tasks-screen').style.display = 'none';
-        }
-
-        // Показать экран заданий
-        function showTasksScreen() {
-            document.getElementById('main-screen').style.display = 'none';
-            document.getElementById('tasks-screen').style.display = 'block';
+            document.getElementById('profile-screen').style.display = 'none';
         }
 
         // Инициализация игры
         updateUI();
+
+        // 3D-модель грузчика
+        function init3DModel() {
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, 300); // Размер модели
+    document.getElementById('model-container').appendChild(renderer.domElement);
+
+    // Добавляем свет
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(10, 10, 10).normalize();
+    scene.add(light);
+
+    // Загружаем 3D-модель
+    const loader = new THREE.GLTFLoader();
+    loader.load('loader.glb', function(gltf) { // Укажите правильный путь к файлу модели
+        const model = gltf.scene;
+        scene.add(model);
+
+        // Масштабирование модели (если нужно)
+        model.scale.set(0.5, 0.5, 0.5);
+
+        // Центрирование модели
+        model.position.y = -1; // Корректировка положения по Y
+    });
+
+    camera.position.z = 5;
+
+    function animate() {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+    }
+
+    animate();
+}
     </script>
 </body>
 </html>
