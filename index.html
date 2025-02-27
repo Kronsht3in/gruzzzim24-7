@@ -50,7 +50,7 @@
             transition: width 0.5s ease-in-out;
         }
 
-        /* Экран разгрузки */
+        /* Экран разгрузки машины */
         #unloading-screen {
             display: none;
             position: absolute;
@@ -58,7 +58,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            background: url('unloading-background.jpg') no-repeat center center fixed; /* Фон для разгрузки */
+            background-size: cover;
             color: white;
             display: flex;
             flex-direction: column;
@@ -71,56 +72,53 @@
             position: relative;
             width: 100%;
             height: 150px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
         }
+
         .truck {
             width: 100px;
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
+            transform: rotateY(180deg); /* Разворачиваем грузовик на 180 градусов */
             animation: move-truck 2s infinite;
         }
+
         .loader {
             width: 50px;
-            position: absolute;
-            bottom: 70px;
-            left: 50%;
-            transform: translateX(-50%);
+            margin-left: 20px; /* Отступ от грузовика */
             animation: unload 2s infinite;
         }
 
         @keyframes move-truck {
-            0% { transform: translateY(0) translateX(-50%); }
-            50% { transform: translateY(-10px) translateX(-50%); }
-            100% { transform: translateY(0) translateX(-50%); }
-        }
-        @keyframes unload {
-            0% { transform: rotate(0deg) translateX(-50%); }
-            50% { transform: rotate(30deg) translateX(-50%); }
-            100% { transform: rotate(0deg) translateX(-50%); }
+            0% { transform: translateY(0) rotateY(180deg); }
+            50% { transform: translateY(-10px) rotateY(180deg); }
+            100% { transform: translateY(0) rotateY(180deg); }
         }
 
-        /* Задания */
-        #tasks-screen {
-            display: none;
-            text-align: center;
+        @keyframes unload {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(30deg); }
+            100% { transform: rotate(0deg); }
         }
-        .task {
-            margin: 10px 0;
-            padding: 10px 20px;
-            font-size: 16px;
+
+        /* Кнопка "Разгрузить машину" */
+        #unload-start-button {
+            padding: 15px 30px;
+            font-size: 18px;
             cursor: pointer;
             border: none;
-            border-radius: 5px;
-            background-color: #008CBA;
+            border-radius: 10px;
+            background-color: #007BFF;
             color: white;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        .task:hover {
-            background-color: #005f73;
+        #unload-start-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.1);
         }
 
-        /* Нижняя панель */
+        /* Нижние кнопки */
         .bottom-buttons {
             position: fixed;
             bottom: 0;
@@ -128,7 +126,7 @@
             width: 100%;
             display: flex;
             justify-content: space-around;
-            background: #4CAF50; /* Приятный зеленый цвет */
+            background: #4CAF50;
             padding: 10px 0;
             border-top: 1px solid #3E8E41;
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
@@ -169,10 +167,13 @@
         <div id="unloading-screen" style="display: none;">
             <h2>Разгрузка машины</h2>
             <button onclick="startUnloading()" id="unload-start-button">Разгрузить машину</button>
+            
+            <!-- Анимация разгрузки -->
             <div class="truck-animation">
-                <img src="truck.png" alt="Грузовик" class="truck">
-                <img src="loader.png" alt="Грузчик" class="loader">
+                <img src="images/truck.png" alt="Грузовик" class="truck">
+                <img src="images/loader.png" alt="Грузчик" class="loader">
             </div>
+            
             <div class="progress-bar">
                 <div id="unloadProgressBarFill" class="progress-bar-fill"></div>
             </div>
