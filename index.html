@@ -402,12 +402,10 @@
             // Грузовик уезжает
             const truck = document.querySelector('.truck');
             truck.classList.remove('active'); // Останавливаем анимацию грузовика
-            truck.style.opacity = '0'; // Скрываем грузовик
-
+        
             // Грузчик остается на месте
             const loader = document.querySelector('.loader');
             loader.classList.remove('active'); // Останавливаем анимацию грузчика
-            loader.style.animation = 'none'; // Отключаем анимацию
 
             // Возвращаем кнопку "Разгрузить машину"
             document.getElementById('unload-start-button').style.display = 'block';
