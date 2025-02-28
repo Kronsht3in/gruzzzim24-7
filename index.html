@@ -68,57 +68,103 @@
         }
 
         /* Экран разгрузки машины */
+        #unloading-screen {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.8); /* Темный фон для экрана разгрузки */
+        }
+
+        /* Заголовок "Разгрузка машины" */
         #unloading-screen h2 {
             font-size: 28px;
-            color: #FFC107;
+            color: #FFC107; /* Яркий цвет заголовка */
             margin-bottom: 20px;
         }
+
+        /* Кнопка "Разгрузить машину" */
+        #unload-start-button {
+            padding: 20px 40px;
+            font-size: 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 15px;
+            background-color: #007BFF;
+            color: white;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+        #unload-start-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.1);
+        }
+
+        /* Анимация разгрузки */
         .truck-animation {
             position: relative;
-            height: 250px;
+            width: 100%;
+            height: 200px; /* Вертикальная высота */
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start; /* Размещаем грузовик слева */
         }
+
         .truck {
-            width: 200px;
+            width: 200px; /* Размер грузовика */
             transform: rotateY(180deg);
             animation: move-truck 2s infinite;
             opacity: 0; /* Скрыть по умолчанию */
         }
+
         .loader {
-            width: 100px;
-            margin-left: 20px;
+            width: 100px; /* Размер грузчика */
+            margin-left: 20px; /* Отступ от грузовика */
             animation: unload 2s infinite;
             opacity: 0; /* Скрыть по умолчанию */
         }
+
+        /* Показываем анимацию только при активации */
         .truck.active, .loader.active {
-            opacity: 1; /* Показать при активации */
+            opacity: 1;
         }
+
         @keyframes move-truck {
             0% { transform: translateY(0) rotateY(180deg); }
             50% { transform: translateY(-20px) rotateY(180deg); }
             100% { transform: translateY(0) rotateY(180deg); }
         }
+
         @keyframes unload {
             0% { transform: rotate(0deg); }
             50% { transform: rotate(45deg); }
             100% { transform: rotate(0deg); }
         }
 
-        /* Кнопки */
-        #rename-button, #unload-start-button {
-            padding: 20px 40px;
-            font-size: 20px;
+        /* Кнопки заданий */
+        .task {
+            margin: 10px 0;
+            padding: 15px 25px;
+            font-size: 18px;
             cursor: pointer;
             border: none;
-            border-radius: 15px;
-            background-color: #FF9800;
+            border-radius: 10px;
+            background-color: #008CBA;
             color: white;
-            transition: background-color 0.3s, transform 0.2s;
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
-            margin-top: 20px;
+            transition: background-color 0.3s;
+            width: 80%;
+            max-width: 300px;
         }
-        #rename-button:hover, #unload-start-button:hover {
-            background-color: #E65100;
-            transform: scale(1.1);
+        .task:hover {
+            background-color: #005f73;
         }
 
         /* Нижние кнопки */
@@ -137,7 +183,7 @@
         .bottom-button {
             padding: 12px;
             border: none;
-            border-radius: 50%;
+            border-radius: 50%; /* Круглые кнопки */
             background-color: #ffffff;
             color: #4CAF50;
             transition: background-color 0.3s, transform 0.2s;
@@ -236,32 +282,40 @@
             updateUI();
         }
 
-        // Функции для показа экранов
+        // Функция для показа профиля
         function showProfileScreen() {
             document.getElementById('main-screen').style.display = 'block';
             document.getElementById('unloading-screen').style.display = 'none';
             document.getElementById('tasks-screen').style.display = 'none';
         }
 
+        // Функция для показа экрана разгрузки машины
         function showUnloadingScreen() {
             document.getElementById('main-screen').style.display = 'none';
             document.getElementById('unloading-screen').style.display = 'flex';
             document.getElementById('tasks-screen').style.display = 'none';
 
-            // Скрываем анимацию до начала разгрузки
+            // Скрываем анимацию до начала
             const truck = document.querySelector('.truck');
             const loader = document.querySelector('.loader');
             truck.classList.remove('active');
             loader.classList.remove('active');
+
+            // Возвращаем кнопку "Разгрузить машину" в исходное состояние
+            document.getElementById('unload-start-button').style.display = 'block';
+            document.getElementById('unload-button').style.display = 'none';
+            document.getElementById('unloadProgressBarFill').style.width = '0%';
+            document.getElementById('unload-timer').textContent = 'Осталось: 10 секунд';
         }
 
+        // Функция для показа экрана заданий
         function showTasksScreen() {
             document.getElementById('main-screen').style.display = 'none';
             document.getElementById('unloading-screen').style.display = 'none';
             document.getElementById('tasks-screen').style.display = 'block';
         }
 
-        // Разгрузка машины
+        // Функция для начала разгрузки машины
         let unloadTimer;
         function startUnloading() {
             const truck = document.querySelector('.truck');
@@ -270,6 +324,9 @@
             // Показываем анимацию
             truck.classList.add('active');
             loader.classList.add('active');
+
+            // Скрываем кнопку "Разгрузить машину"
+            document.getElementById('unload-start-button').style.display = 'none';
 
             let timeLeft = 10;
             const progressBar = document.getElementById('unloadProgressBarFill');
@@ -287,15 +344,21 @@
             }, 1000);
         }
 
+        // Функция для завершения разгрузки машины
         function completeUnloading() {
             clearInterval(unloadTimer);
+
             const xpGained = Math.floor(Math.random() * 10) + 5;
             gainXp(xpGained);
+
             alert(`Вы разгрузили машину и получили ${xpGained} XP!`);
-            document.getElementById('unload-button').style.display = 'block';
+
+            // Возвращаем кнопку "Разгрузить машину" и сбрасываем состояние
+            document.getElementById('unload-start-button').style.display = 'block';
+            document.getElementById('unload-button').style.display = 'none';
         }
 
-        // Изменение имени персонажа
+        // Функция для изменения имени персонажа
         function startRename() {
             const newName = prompt("Введите новое имя для вашего персонажа:");
             if (newName && newName.trim() !== "") {
