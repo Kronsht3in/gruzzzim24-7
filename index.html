@@ -12,7 +12,7 @@
             width: 100%;
             height: 100%;
             font-family: Arial, sans-serif;
-            background: url('https://static.vecteezy.com/system/resources/previews/000/154/316/original/vector-movers-man-carrying-cardboard-boxes.jpg') no-repeat center center fixed; /* Фон для всех вкладок */
+            background: url('background-truck.jpg') no-repeat center center fixed;
             background-size: cover;
             display: flex;
             flex-direction: column;
@@ -28,20 +28,26 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        /* Информация о игроке */
+        /* Информация о игроке (Профиль) */
         .player-info {
             text-align: center;
+            margin-bottom: 30px;
+        }
+        #profile-player-name {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .player-stats {
+            font-size: 18px;
             margin-bottom: 20px;
         }
-
-        /* Прогресс-бар */
         .progress-bar {
             width: 100%;
             height: 20px;
             background-color: #ddd;
             border-radius: 10px;
             overflow: hidden;
-            margin-top: 10px;
+            margin-bottom: 20px;
         }
         .progress-bar-fill {
             height: 100%;
@@ -50,9 +56,9 @@
             transition: width 0.5s ease-in-out;
         }
 
-        /* Моделька игрока на главном экране */
-        #main-screen img.player-model {
-            width: 100px;
+        /* Моделька игрока на экране профиля */
+        img.player-model {
+            width: 150px; /* Увеличена моделька */
             height: auto;
             margin: 20px auto;
             display: block;
@@ -79,38 +85,11 @@
             justify-content: center;
         }
 
-        /* Анимация разгрузки */
-        .truck-animation {
-            position: relative;
-            width: 100%;
-            height: 150px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-        }
-
-        .truck {
-            width: 100px;
-            transform: rotateY(180deg); /* Разворачиваем грузовик */
-            animation: move-truck 2s infinite;
-        }
-
-        .loader {
-            width: 50px;
-            margin-left: 20px; /* Отступ от грузовика */
-            animation: unload 2s infinite;
-        }
-
-        @keyframes move-truck {
-            0% { transform: translateY(0) rotateY(180deg); }
-            50% { transform: translateY(-10px) rotateY(180deg); }
-            100% { transform: translateY(0) rotateY(180deg); }
-        }
-
-        @keyframes unload {
-            0% { transform: rotate(0deg); }
-            50% { transform: rotate(30deg); }
-            100% { transform: rotate(0deg); }
+        /* Заголовок "Разгрузка машины" */
+        #unloading-screen h2 {
+            font-size: 28px; /* Увеличен размер текста */
+            color: #FFC107; /* Яркий цвет заголовка */
+            margin-bottom: 20px;
         }
 
         /* Кнопка "Разгрузить машину" */
@@ -124,63 +103,87 @@
             color: white;
             transition: background-color 0.3s, transform 0.2s;
             box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
         }
         #unload-start-button:hover {
             background-color: #0056b3;
             transform: scale(1.1);
         }
 
-        /* Задания */
-        #tasks-screen {
-            display: none;
-            text-align: center;
-        }
-        .task {
-            margin: 10px 0;
-            padding: 15px 25px;
-            font-size: 18px;
-            cursor: pointer;
-            border: none;
-            border-radius: 10px;
-            background-color: #008CBA;
-            color: white;
-            transition: background-color 0.3s;
-            width: 80%;
-            max-width: 300px;
-        }
-        .task:hover {
-            background-color: #005f73;
+        /* Анимация разгрузки */
+        .truck-animation {
+            position: relative;
+            width: 100%;
+            height: 250px; /* Увеличен размер анимации */
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
         }
 
-        /* Нижние кнопки */
+        .truck {
+            width: 200px; /* Увеличен грузовик */
+            transform: rotateY(180deg);
+            animation: move-truck 2s infinite;
+            opacity: 0; /* Скрыть по умолчанию */
+        }
+
+        .loader {
+            width: 100px; /* Увеличен грузчик */
+            margin-left: 20px;
+            animation: unload 2s infinite;
+            opacity: 0; /* Скрыть по умолчанию */
+        }
+
+        /* Показать анимацию после нажатия */
+        .truck.active, .loader.active {
+            opacity: 1;
+        }
+
+        @keyframes move-truck {
+            0% { transform: translateY(0) rotateY(180deg); }
+            50% { transform: translateY(-20px) rotateY(180deg); }
+            100% { transform: translateY(0) rotateY(180deg); }
+        }
+
+        @keyframes unload {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(45deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        /* Нижние кнопки с иконками */
         .bottom-buttons {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
             display: flex;
-            justify-content: space-between; /* Равномерное распределение кнопок */
+            justify-content: space-between;
             background: #4CAF50;
             padding: 10px 20px;
             border-top: 1px solid #3E8E41;
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
         }
         .bottom-button {
-            padding: 12px 20px;
+            padding: 12px;
             font-size: 16px;
             cursor: pointer;
             border: none;
-            border-radius: 25px;
+            border-radius: 50%; /* Круглые кнопки */
             background-color: #ffffff;
             color: #4CAF50;
             transition: background-color 0.3s, transform 0.2s;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            flex: 1; /* Равномерное распределение по ширине */
-            margin: 0 5px;
         }
         .bottom-button:hover {
             background-color: #e0f7ea;
             transform: scale(1.1);
+        }
+
+        /* Иконки для кнопок */
+        .bottom-button img {
+            width: 24px;
+            height: 24px;
         }
     </style>
 </head>
@@ -189,15 +192,17 @@
         <!-- Главный экран (Профиль) -->
         <div id="main-screen" style="display: block;">
             <div class="player-info">
-                <h1 id="player-name">Грузчик</h1>
-                <p>Уровень: <span id="level">1</span></p>
-                <p>XP: <span id="currentXp">0</span> / <span id="nextLevelXp">10</span></p>
+                <h1 id="profile-player-name">Профиль: Грузчик</h1>
+                <p class="player-stats">Уровень: <span id="profile-level">1</span></p>
+                <p class="player-stats">XP: <span id="profile-currentXp">0</span> / <span id="profile-nextLevelXp">10</span></p>
                 <div class="progress-bar">
-                    <div id="progressBarFill" class="progress-bar-fill"></div>
+                    <div id="profile-progressBarFill" class="progress-bar-fill"></div>
                 </div>
-                <button onclick="renameCharacter()">Изменить имя</button>
+                <!-- Кнопка "Изменить имя" -->
+                <button id="rename-button" onclick="startRename()">Изменить имя</button>
             </div>
-            <img src="loaders.png" alt="Моделька игрока" class="player-model">
+            <!-- Моделька игрока -->
+            <img src="images/loader.png" alt="Моделька игрока" class="player-model">
         </div>
 
         <!-- Экран разгрузки машины -->
@@ -207,8 +212,8 @@
             
             <!-- Анимация разгрузки -->
             <div class="truck-animation">
-                <img src="truck.png" alt="Грузовик" class="truck">
-                <img src="loader.png" alt="Грузчик" class="loader">
+                <img src="images/truck.png" alt="Грузовик" class="truck">
+                <img src="images/loader.png" alt="Грузчик" class="loader">
             </div>
             
             <div class="progress-bar">
@@ -227,11 +232,17 @@
         </div>
     </div>
 
-    <!-- Нижние кнопки -->
+    <!-- Нижние кнопки с иконками -->
     <div class="bottom-buttons">
-        <button class="bottom-button" onclick="showUnloadingScreen()">Разгрузка машины</button>
-        <button class="bottom-button" onclick="showProfileScreen()">Профиль</button>
-        <button class="bottom-button" onclick="showTasksScreen()">Задания</button>
+        <button class="bottom-button" onclick="showUnloadingScreen()">
+            <img src="icons/unload-icon.png" alt="Разгрузка">
+        </button>
+        <button class="bottom-button" onclick="showProfileScreen()">
+            <img src="icons/profile-icon.png" alt="Профиль">
+        </button>
+        <button class="bottom-button" onclick="showTasksScreen()">
+            <img src="icons/tasks-icon.png" alt="Задания">
+        </button>
     </div>
 
     <script>
@@ -245,12 +256,12 @@
 
         // Обновление интерфейса
         function updateUI() {
-            document.getElementById('player-name').textContent = player.name;
-            document.getElementById('level').textContent = player.level;
-            document.getElementById('currentXp').textContent = player.xp;
-            document.getElementById('nextLevelXp').textContent = player.nextLevelXp;
+            document.getElementById('profile-player-name').textContent = `Профиль: ${player.name}`;
+            document.getElementById('profile-level').textContent = player.level;
+            document.getElementById('profile-currentXp').textContent = player.xp;
+            document.getElementById('profile-nextLevelXp').textContent = player.nextLevelXp;
             const progress = (player.xp / player.nextLevelXp) * 100;
-            document.getElementById('progressBarFill').style.width = `${progress}%`;
+            document.getElementById('profile-progressBarFill').style.width = `${progress}%`;
         }
 
         // Получение опыта
@@ -268,6 +279,13 @@
         let unloadTimer;
         function startUnloading() {
             document.getElementById('unload-start-button').style.display = 'none';
+            const truck = document.querySelector('.truck');
+            const loader = document.querySelector('.loader');
+
+            // Показываем анимацию
+            truck.classList.add('active');
+            loader.classList.add('active');
+
             let timeLeft = 10;
             const progressBar = document.getElementById('unloadProgressBarFill');
             const timerElement = document.getElementById('unload-timer');
@@ -304,10 +322,12 @@
             document.getElementById('main-screen').style.display = 'none';
             document.getElementById('unloading-screen').style.display = 'flex';
             document.getElementById('tasks-screen').style.display = 'none';
-            document.getElementById('unload-start-button').style.display = 'block'; // Показываем кнопку "Разгрузить машину"
-            document.getElementById('unloadProgressBarFill').style.width = '0%';
-            document.getElementById('unload-timer').textContent = 'Осталось: 10 секунд';
-            document.getElementById('unload-button').style.display = 'none'; // Скрываем кнопку "Завершить"
+
+            // Скрываем анимацию по умолчанию
+            const truck = document.querySelector('.truck');
+            const loader = document.querySelector('.loader');
+            truck.classList.remove('active');
+            loader.classList.remove('active');
         }
 
         // Показать задания
@@ -317,18 +337,12 @@
             document.getElementById('tasks-screen').style.display = 'block';
         }
 
-        // Возврат к главному экрану
-        function backToMain(from) {
-            document.getElementById('main-screen').style.display = 'block';
-            document.getElementById('unloading-screen').style.display = 'none';
-            document.getElementById('tasks-screen').style.display = 'none';
-        }
-
         // Изменение имени персонажа
-        function renameCharacter() {
+        function startRename() {
             const newName = prompt("Введите новое имя для вашего персонажа:");
             if (newName && newName.trim() !== "") {
                 player.name = newName.trim();
+                gainXp(5); // +5 XP за изменение имени
                 updateUI();
             }
         }
