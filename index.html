@@ -14,8 +14,7 @@
             font-family: Arial, sans-serif;
             background: url('https://static.vecteezy.com/system/resources/previews/000/154/316/original/vector-movers-man-carrying-cardboard-boxes.jpg') no-repeat center center fixed;
             background-size: cover;
-            display: flex;
-            flex-direction: column;
+            overflow: hidden; /* Убираем скролл */
         }
 
         /* Главный контейнер */
@@ -26,6 +25,9 @@
             background: rgba(255, 255, 255, 0.9);
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         /* Информация о игроке */
