@@ -41,27 +41,11 @@
             margin-bottom: 10px;
         }
 
-        /* Прогресс-бар */
-        .progress-bar {
-            width: 100%;
-            height: 20px;
-            background-color: #ddd;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-        .progress-bar-fill {
-            height: 100%;
-            background-color: #4caf50;
-            width: 0%;
-            transition: width 0.5s ease-in-out;
-        }
-
-        /* Моделька игрока (грузчик) */
+        /* Моделька игрока */
         img.player-model {
-            width: 200px; /* Увеличен размер */
+            width: 200px;
             animation: player-spin 5s infinite;
-            margin: 0 auto; /* Центрирование грузчика */
+            margin: 0 auto;
             display: block;
         }
         @keyframes player-spin {
@@ -70,11 +54,47 @@
         }
 
         /* Экран разгрузки машины */
+        #unloading-screen {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.8); /* Темный фон для экрана разгрузки */
+        }
+
+        /* Заголовок "Разгрузка машины" */
         #unloading-screen h2 {
             font-size: 28px;
             color: #FFC107;
             margin-bottom: 20px;
         }
+
+        /* Кнопка "Разгрузить машину" */
+        #unload-start-button {
+            padding: 15px 30px; /* Горизонтально прямоугольная кнопка */
+            font-size: 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 15px;
+            background-color: #007BFF;
+            color: white;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+        #unload-start-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.1);
+        }
+
+        /* Анимация разгрузки */
         .truck-animation {
             position: relative;
             width: 100%;
@@ -119,22 +139,22 @@
             100% { transform: rotate(0deg); }
         }
 
-        /* Кнопки */
-        #rename-button, #unload-start-button {
-            padding: 20px 40px;
-            font-size: 20px;
+        /* Кнопки заданий */
+        .task {
+            margin: 15px 0;
+            padding: 20px 30px; /* Более крупные кнопки */
+            font-size: 18px;
             cursor: pointer;
             border: none;
-            border-radius: 15px;
-            background-color: #FF9800;
+            border-radius: 10px;
+            background-color: #008CBA;
             color: white;
-            transition: background-color 0.3s, transform 0.2s;
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
-            margin-top: 20px;
+            transition: background-color 0.3s;
+            width: 80%; /* Ограничение ширины */
+            max-width: 300px;
         }
-        #rename-button:hover, #unload-start-button:hover {
-            background-color: #E65100;
-            transform: scale(1.1);
+        .task:hover {
+            background-color: #005f73;
         }
 
         /* Нижние кнопки */
@@ -164,10 +184,11 @@
             transform: scale(1.1);
         }
 
-        /* Увеличение иконок */
+        /* Подвинуть иконки левее */
         .bottom-button img {
             width: 48px; /* Увеличенные иконки */
             height: 48px;
+            margin-right: 5px; /* Отступ от края */
         }
     </style>
 </head>
@@ -184,7 +205,7 @@
                 </div>
                 <button id="rename-button" onclick="startRename()">Изменить имя</button>
             </div>
-            <img src="loaders.png" alt="Моделька игрока" class="player-model">
+            <img src="loader.png" alt="Моделька игрока" class="player-model">
         </div>
 
         <!-- Разгрузка машины -->
@@ -273,8 +294,11 @@
             truck.classList.remove('active');
             loader.classList.remove('active');
 
-            // Скрываем кнопку "Завершить"
+            // Возвращаем кнопку "Разгрузить машину"
+            document.getElementById('unload-start-button').style.display = 'block';
             document.getElementById('unload-button').style.display = 'none';
+            document.getElementById('unloadProgressBarFill').style.width = '0%';
+            document.getElementById('unload-timer').textContent = 'Осталось: 10 секунд';
         }
 
         function showTasksScreen() {
@@ -284,6 +308,7 @@
         }
 
         // Начало разгрузки машины
+        let unloadTimer;
         function startUnloading() {
             const truck = document.querySelector('.truck');
             const loader = document.querySelector('.loader');
@@ -292,7 +317,7 @@
             truck.classList.add('active');
             loader.classList.add('active');
 
-            // Скрываем кнопку "Разгрузить машину"
+            // Скрываем кнопку "Разгрузить машину" на время разгрузки
             document.getElementById('unload-start-button').style.display = 'none';
 
             let timeLeft = 10;
@@ -317,18 +342,21 @@
 
             // Грузовик уезжает
             const truck = document.querySelector('.truck');
-            truck.style.opacity = '0'; // Скрываем грузовик после завершения
+            truck.style.opacity = '0'; // Скрываем грузовик
             truck.classList.remove('active');
 
             // Грузчик остается на месте
             const loader = document.querySelector('.loader');
             loader.classList.remove('active'); // Останавливаем анимацию грузчика
-            loader.style.animation = 'none'; // Отключаем анимацию
+            loader.style.animation = 'none';
 
             const xpGained = Math.floor(Math.random() * 10) + 5;
             gainXp(xpGained);
 
             alert(`Вы разгрузили машину и получили ${xpGained} XP!`);
+
+            // Возвращаем кнопку "Разгрузить машину"
+            document.getElementById('unload-start-button').style.display = 'block';
         }
 
         // Изменение имени персонажа
