@@ -40,9 +40,9 @@
             font-size: 18px;
             margin-bottom: 10px;
         }
-        
-         /* Прогресс-бар для XP на главном экране */
-         .progress-bar {
+
+        /* Прогресс-бар для XP на главном экране */
+        .progress-bar {
             width: 100%;
             height: 20px;
             background-color: #ddd;
@@ -94,12 +94,12 @@
 
         /* Кнопка "Разгрузить машину" */
         #unload-start-button {
-            padding: 15px 30px; /* Горизонтально прямоугольная кнопка */
+            padding: 15px 30px;
             font-size: 20px;
             cursor: pointer;
             border: none;
             border-radius: 15px;
-            background-color: #ffdd00;
+            background-color: #007BFF;
             color: white;
             transition: background-color 0.3s, transform 0.2s;
             box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
@@ -123,60 +123,46 @@
             height: 200px; /* Вертикальная высота */
             display: flex;
             align-items: flex-end;
-            justify-content: center;
+            justify-content: space-between; /* Расположение элементов по краям */
         }
 
         /* Грузовик */
         .truck {
-    width: 300px; /* Увеличен размер */
-    transform: rotateY(180deg);
-    animation: move-truck 2s infinite;
-    opacity: 0; /* Скрыто по умолчанию */
-    float: left; /* Позиционируем грузовик слева */
+            width: 300px; /* Увеличен размер */
+            transform: rotateY(180deg);
+            animation: move-truck 2s infinite;
+            opacity: 0; /* Скрыто по умолчанию */
         }
 
         /* Грузчик */
-         .loader {
-    width: 150px; /* Увеличен размер */
-    margin-left: 30px; /* Предыдущий отступ */
-    animation: unload 2s infinite;
-    opacity: 0; /* Скрыто по умолчанию */
-    float: right; /* Позиционируем грузчика справа */
+        .loader {
+            width: 150px; /* Увеличен размер */
+            animation: unload 2s infinite;
+            opacity: 0; /* Скрыто по умолчанию */
         }
-
-         /* Изначально элементы скрыты */
-        .truck, .loader {
-    opacity: 0;
-    transition: opacity 0.5s; /* Плавный переход при появлении */
-         }
 
         /* Показываем анимацию только при активации */
         .truck.active, .loader.active {
-    opacity: 1; /* Появление элемента */
-    animation: move-truck 2s infinite; /* Запускаем анимацию грузовика */
-         }
-
-         .loader.active {
-    animation: unload 2s infinite; /* Запускаем анимацию грузчика */
-          }
+            opacity: 1;
+        }
 
         /* Анимация грузовика */
-         @keyframes move-truck {
-    0% { transform: translateY(0) rotateY(180deg); }
-    50% { transform: translateY(-20px) rotateY(180deg); }
-    100% { transform: translateY(0) rotateY(180deg); }
-         }
+        @keyframes move-truck {
+            0% { transform: translateY(0) rotateY(180deg); }
+            50% { transform: translateY(-20px) rotateY(180deg); }
+            100% { transform: translateY(0) rotateY(180deg); }
+        }
 
-/* Анимация грузчика */
+        /* Анимация грузчика */
         @keyframes unload {
-    0% { transform: rotate(0deg); }
-    50% { transform: rotate(45deg); }
-    100% { transform: rotate(0deg); }
-         }
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(45deg); }
+            100% { transform: rotate(0deg); }
+        }
 
         /* Кнопка "Изменить имя" */
         #rename-button {
-            padding: 15px 30px; /* Аналогично кнопке "Разгрузить машину" */
+            padding: 15px 30px;
             font-size: 20px;
             cursor: pointer;
             border: none;
@@ -192,24 +178,6 @@
             transform: scale(1.1);
         }
 
-        /* Кнопки заданий */
-        .task {
-            margin: 15px 0;
-            padding: 20px 30px; /* Более крупные кнопки */
-            font-size: 18px;
-            cursor: pointer;
-            border: none;
-            border-radius: 10px;
-            background-color: #008CBA;
-            color: white;
-            transition: background-color 0.3s;
-            width: 80%; /* Ограничение ширины */
-            max-width: 300px;
-        }
-        .task:hover {
-            background-color: #005f73;
-        }
-
         /* Нижние кнопки */
         .bottom-buttons {
             position: fixed;
@@ -219,7 +187,7 @@
             display: flex;
             justify-content: space-between;
             background: #4CAF50;
-            padding: 10px 30px;
+            padding: 10px 30px; /* Подвинули иконки левее */
             border-top: 1px solid #3E8E41;
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
         }
@@ -237,11 +205,11 @@
             transform: scale(1.1);
         }
 
-        /* Подвинуть иконки левее */
+        /* Увеличили иконки */
         .bottom-button img {
-            width: 48px; /* Увеличенные иконки */
+            width: 48px;
             height: 48px;
-            margin-right: 5px; /* Отступ от края */
+            margin-right: 5px;
         }
     </style>
 </head>
@@ -265,14 +233,16 @@
         <div id="unloading-screen" style="display: none;">
             <h2>Разгрузка машины</h2>
             <button onclick="startUnloading()" id="unload-start-button">Разгрузить машину</button>
+            <div id="unload-progress-container">
+                <div class="progress-bar">
+                    <div id="unloadProgressBarFill" class="progress-bar-fill"></div>
+                </div>
+                <p id="unload-timer">Осталось: 10 секунд</p>
+            </div>
             <div class="truck-animation">
                 <img src="truck.png" alt="Грузовик" class="truck">
                 <img src="loader.png" alt="Грузчик" class="loader">
             </div>
-            <div class="progress-bar">
-                <div id="unloadProgressBarFill" class="progress-bar-fill"></div>
-            </div>
-            <p id="unload-timer">Осталось: 10 секунд</p>
             <button onclick="completeUnloading()" id="unload-button" disabled>Завершить</button>
         </div>
 
@@ -287,13 +257,13 @@
 
     <!-- Нижние кнопки -->
     <div class="bottom-buttons">
-        <button class="bottom-button" onclick="showUnloadingScreen()">
+        <button class="bottom-button" onclick="showUnloadingScreen()" style="margin-left: 10px;"> <!-- Сдвинутая левее -->
             <img src="unload-icon.png" alt="Разгрузка">
         </button>
-        <button class="bottom-button" onclick="showProfileScreen()">
+        <button class="bottom-button" onclick="showProfileScreen()" style="margin-left: 10px;"> <!-- Сдвинутая левее -->
             <img src="profile-icon.png" alt="Профиль">
         </button>
-        <button class="bottom-button" onclick="showTasksScreen()">
+        <button class="bottom-button" onclick="showTasksScreen()" style="margin-left: 10px;"> <!-- Сдвинутая левее -->
             <img src="tasks-icon.png" alt="Задания">
         </button>
     </div>
@@ -341,16 +311,12 @@
             document.getElementById('unloading-screen').style.display = 'flex';
             document.getElementById('tasks-screen').style.display = 'none';
 
+            // Скрываем анимацию до начала разгрузки
             const truck = document.querySelector('.truck');
             const loader = document.querySelector('.loader');
-            const unloadButton = document.querySelector('.unload-button');
+            truck.classList.remove('active');
+            loader.classList.remove('active');
 
-            // Добавляем обработчик события на кнопку
-         unloadButton.addEventListener('click', () => {
-            // Проверяем, активны ли элементы, и переключаем классы
-         truck.classList.toggle('active');
-         loader.classList.toggle('active');
-         });
             // Возвращаем кнопку "Разгрузить машину"
             document.getElementById('unload-start-button').style.display = 'block';
             document.getElementById('unload-button').style.display = 'none';
@@ -374,7 +340,7 @@
             truck.classList.add('active');
             loader.classList.add('active');
 
-            // Скрываем кнопку "Разгрузить машину" на время разгрузки
+            // Скрываем кнопку "Разгрузить машину"
             document.getElementById('unload-start-button').style.display = 'none';
 
             let timeLeft = 10;
@@ -414,7 +380,6 @@
             gainXp(xpGained);
 
             alert(`Вы разгрузили машину и получили ${xpGained} XP!`);
-
         }
 
         // Изменение имени персонажа
