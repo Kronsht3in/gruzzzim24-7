@@ -40,6 +40,22 @@
             font-size: 18px;
             margin-bottom: 10px;
         }
+        
+         /* Прогресс-бар для XP на главном экране */
+         .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background-color: #4caf50;
+            width: 0%;
+            transition: width 0.5s ease-in-out;
+        }
 
         /* Моделька игрока */
         img.player-model {
@@ -94,6 +110,12 @@
             transform: scale(1.1);
         }
 
+        /* Ползунок разгрузки машины */
+        #unload-progress-container {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
         /* Анимация разгрузки */
         .truck-animation {
             position: relative;
@@ -115,7 +137,7 @@
         /* Грузчик */
         .loader {
             width: 150px; /* Увеличен размер */
-            margin-left: 20px;
+            margin-left: 30px;
             animation: unload 2s infinite;
             opacity: 0; /* Скрыто по умолчанию */
         }
@@ -137,6 +159,24 @@
             0% { transform: rotate(0deg); }
             50% { transform: rotate(45deg); }
             100% { transform: rotate(0deg); }
+        }
+
+        /* Кнопка "Изменить имя" */
+        #rename-button {
+            padding: 15px 30px; /* Аналогично кнопке "Разгрузить машину" */
+            font-size: 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 15px;
+            background-color: #FF9800; /* Оранжевый цвет */
+            color: white;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+        }
+        #rename-button:hover {
+            background-color: #E65100;
+            transform: scale(1.1);
         }
 
         /* Кнопки заданий */
@@ -166,7 +206,7 @@
             display: flex;
             justify-content: space-between;
             background: #4CAF50;
-            padding: 10px 20px;
+            padding: 10px 30px;
             border-top: 1px solid #3E8E41;
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
         }
@@ -342,21 +382,22 @@
 
             // Грузовик уезжает
             const truck = document.querySelector('.truck');
+            truck.classList.remove('active'); // Останавливаем анимацию грузовика
             truck.style.opacity = '0'; // Скрываем грузовик
-            truck.classList.remove('active');
 
             // Грузчик остается на месте
             const loader = document.querySelector('.loader');
             loader.classList.remove('active'); // Останавливаем анимацию грузчика
-            loader.style.animation = 'none';
+            loader.style.animation = 'none'; // Отключаем анимацию
+
+            // Возвращаем кнопку "Разгрузить машину"
+            document.getElementById('unload-start-button').style.display = 'block';
 
             const xpGained = Math.floor(Math.random() * 10) + 5;
             gainXp(xpGained);
 
             alert(`Вы разгрузили машину и получили ${xpGained} XP!`);
 
-            // Возвращаем кнопку "Разгрузить машину"
-            document.getElementById('unload-start-button').style.display = 'block';
         }
 
         // Изменение имени персонажа
