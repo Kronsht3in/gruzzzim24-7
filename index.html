@@ -442,10 +442,40 @@
         function showStatusTask() {
             alert("Добавьте игру в свой статус Telegram, чтобы получить +10 XP.");
         }
+        
+        // Сохранение данных в бот после завершения действия
+     function saveProgressToBot() {
+            const data = {
+                chatId: player.chat_id,
+                name: player.name,
+                xp: player.xp,
+                level: player.level,
+                nextLevelXp: player.next_level_xp,
+            };
 
-        // Инициализация игры
+            fetch('/save_progress', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log('Данные успешно сохранены:', result);
+            })
+            .catch(error => {
+                console.error('Ошибка при сохранении данных:', error);
+            });
+        }
+
+        // Автоматическое сохранение данных перед закрытием страницы
+        window.addEventListener('beforeunload', function () {
+            saveProgressToBot(); // Сохраняем прогресс перед закрытием
+        });
+         // Инициализация
+         getUrlParams();
         updateUI();
-        showProfileScreen(); // По умолчанию показываем профиль
     </script>
 </body>
 </html>
